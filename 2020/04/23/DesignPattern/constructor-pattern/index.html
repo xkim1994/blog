@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+<link rel="stylesheet" href="/blog/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"xkim1994.github.io","root":"/blog/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="构造器模式 在经典的面向对象的编程语言中，构造函数是一种特殊的方法，用于在为其分配了内存后初始化新创建的对象。在 JavaScript 中，几乎所有事物都是对象，因此我们最常对对象构造函数感兴趣。  对象构造函数用于创建特定类型的对象-准备对象以供使用并接受参数，以便在首次创建对象时，构造函数可以使用该参数来设置成员属性和方法的值。  对象创建 在 JavaScript 中创建新对象的三种常见方法">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JavaScript设计模式之构造器模式">
+<meta property="og:url" content="https://xkim1994.github.io/blog/2020/04/23/DesignPattern/constructor-pattern/index.html">
+<meta property="og:site_name" content="BLOG ©️ XKIM">
+<meta property="og:description" content="构造器模式 在经典的面向对象的编程语言中，构造函数是一种特殊的方法，用于在为其分配了内存后初始化新创建的对象。在 JavaScript 中，几乎所有事物都是对象，因此我们最常对对象构造函数感兴趣。  对象构造函数用于创建特定类型的对象-准备对象以供使用并接受参数，以便在首次创建对象时，构造函数可以使用该参数来设置成员属性和方法的值。  对象创建 在 JavaScript 中创建新对象的三种常见方法">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-04-23T12:00:00.000Z">
+<meta property="article:modified_time" content="2021-07-15T13:19:30.254Z">
+<meta property="article:author" content="XKIM">
+<meta property="article:tag" content="es6">
+<meta property="article:tag" content="oop">
+<meta property="article:tag" content="DesignPattern">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://xkim1994.github.io/blog/2020/04/23/DesignPattern/constructor-pattern/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>JavaScript设计模式之构造器模式 | BLOG ©️ XKIM</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">BLOG ©️ XKIM</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/xkim1994" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://xkim1994.github.io/blog/2020/04/23/DesignPattern/constructor-pattern/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/avatar.gif">
+      <meta itemprop="name" content="XKIM">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="BLOG ©️ XKIM">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          JavaScript设计模式之构造器模式
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-04-23 20:00:00" itemprop="dateCreated datePublished" datetime="2020-04-23T20:00:00+08:00">2020-04-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-07-15 21:19:30" itemprop="dateModified" datetime="2021-07-15T21:19:30+08:00">2021-07-15</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blog/categories/DesignPattern/" itemprop="url" rel="index"><span itemprop="name">DesignPattern</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="构造器模式"><a href="#构造器模式" class="headerlink" title="构造器模式"></a>构造器模式</h2><p>在经典的面向对象的编程语言中，构造函数是一种特殊的方法，用于在为其分配了内存后初始化新创建的对象。在 JavaScript 中，几乎所有事物都是对象，因此我们最常对对象构造函数感兴趣。</p>
+<p>对象构造函数用于创建特定类型的对象-准备对象以供使用并接受参数，以便在首次创建对象时，构造函数可以使用该参数来设置成员属性和方法的值。</p>
+<h3 id="对象创建"><a href="#对象创建" class="headerlink" title="对象创建"></a>对象创建</h3><p>在 JavaScript 中创建新对象的三种常见方法如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> newObject = &#123;&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// or</span></span><br><span class="line"><span class="keyword">var</span> newObject = <span class="built_in">Object</span>.create(<span class="built_in">Object</span>.prototype);</span><br><span class="line"></span><br><span class="line"><span class="comment">// or</span></span><br><span class="line"><span class="keyword">var</span> newObject = <span class="keyword">new</span> <span class="built_in">Object</span>();</span><br></pre></td></tr></table></figure>
+
+<p>在最后一个示例中的“ Object”构造函数为特定值创建对象包装的情况下，或者在未传递任何值的情况下，它将创建一个空对象并将其返回。</p>
+<p>然后可以通过四种方式将键和值分配给对象：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ECMAScript 3 compatible approaches</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 1. Dot syntax</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Set properties</span></span><br><span class="line">newObject.someKey = <span class="string">&quot;Hello World&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Get properties</span></span><br><span class="line"><span class="keyword">var</span> value = newObject.someKey;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 2. Square bracket syntax</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Set properties</span></span><br><span class="line">newObject[<span class="string">&quot;someKey&quot;</span>] = <span class="string">&quot;Hello World&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Get properties</span></span><br><span class="line"><span class="keyword">var</span> value = newObject[<span class="string">&quot;someKey&quot;</span>];</span><br><span class="line"></span><br><span class="line"><span class="comment">// ECMAScript 5 only compatible approaches</span></span><br><span class="line"><span class="comment">// For more information see: http://kangax.github.com/es5-compat-table/</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 3. Object.defineProperty</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Set properties</span></span><br><span class="line"><span class="built_in">Object</span>.defineProperty(newObject, <span class="string">&quot;someKey&quot;</span>, &#123;</span><br><span class="line">  <span class="attr">value</span>: <span class="string">&quot;for more control of the property&#x27;s behavior&quot;</span>,</span><br><span class="line">  <span class="attr">writable</span>: <span class="literal">true</span>,</span><br><span class="line">  <span class="attr">enumerable</span>: <span class="literal">true</span>,</span><br><span class="line">  <span class="attr">configurable</span>: <span class="literal">true</span>,</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// If the above feels a little difficult to read, a short-hand could</span></span><br><span class="line"><span class="comment">// be written as follows:</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> defineProp = <span class="function"><span class="keyword">function</span> (<span class="params">obj, key, value</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> config = &#123;</span><br><span class="line">    <span class="attr">value</span>: value,</span><br><span class="line">    <span class="attr">writable</span>: <span class="literal">true</span>,</span><br><span class="line">    <span class="attr">enumerable</span>: <span class="literal">true</span>,</span><br><span class="line">    <span class="attr">configurable</span>: <span class="literal">true</span>,</span><br><span class="line">  &#125;;</span><br><span class="line">  <span class="built_in">Object</span>.defineProperty(obj, key, config);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// To use, we then create a new empty &quot;person&quot; object</span></span><br><span class="line"><span class="keyword">var</span> person = <span class="built_in">Object</span>.create(<span class="built_in">Object</span>.prototype);</span><br><span class="line"></span><br><span class="line"><span class="comment">// Populate the object with properties</span></span><br><span class="line">defineProp(person, <span class="string">&quot;car&quot;</span>, <span class="string">&quot;Delorean&quot;</span>);</span><br><span class="line">defineProp(person, <span class="string">&quot;dateOfBirth&quot;</span>, <span class="string">&quot;1981&quot;</span>);</span><br><span class="line">defineProp(person, <span class="string">&quot;hasBeard&quot;</span>, <span class="literal">false</span>);</span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(person);</span><br><span class="line"><span class="comment">// Outputs: Object &#123;car: &quot;Delorean&quot;, dateOfBirth: &quot;1981&quot;, hasBeard: false&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 4. Object.defineProperties</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Set properties</span></span><br><span class="line"><span class="built_in">Object</span>.defineProperties(newObject, &#123;</span><br><span class="line">  <span class="attr">someKey</span>: &#123;</span><br><span class="line">    <span class="attr">value</span>: <span class="string">&quot;Hello World&quot;</span>,</span><br><span class="line">    <span class="attr">writable</span>: <span class="literal">true</span>,</span><br><span class="line">  &#125;,</span><br><span class="line"></span><br><span class="line">  <span class="attr">anotherKey</span>: &#123;</span><br><span class="line">    <span class="attr">value</span>: <span class="string">&quot;Foo bar&quot;</span>,</span><br><span class="line">    <span class="attr">writable</span>: <span class="literal">false</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// Getting properties for 3. and 4. can be done using any of the</span></span><br><span class="line"><span class="comment">// options in 1. and 2.</span></span><br></pre></td></tr></table></figure>
+
+<p>这些方法甚至可以用于继承，如下所示：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Usage:</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Create a race car driver that inherits from the person object</span></span><br><span class="line"><span class="keyword">var</span> driver = <span class="built_in">Object</span>.create(person);</span><br><span class="line"></span><br><span class="line"><span class="comment">// Set some properties for the driver</span></span><br><span class="line">defineProp(driver, <span class="string">&quot;topSpeed&quot;</span>, <span class="string">&quot;100mph&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// Get an inherited property (1981)</span></span><br><span class="line"><span class="built_in">console</span>.log(driver.dateOfBirth);</span><br><span class="line"></span><br><span class="line"><span class="comment">// Get the property we set (100mph)</span></span><br><span class="line"><span class="built_in">console</span>.log(driver.topSpeed);</span><br></pre></td></tr></table></figure>
+
+<h3 id="基本构造函数"><a href="#基本构造函数" class="headerlink" title="基本构造函数"></a>基本构造函数</h3><p>正如我们前面所看到的，JavaScript 不支持类的概念，但是它支持与对象一起使用的特殊构造函数。通过简单地用关键字“ new”为构造函数的调用加上前缀，我们可以告诉 JavaScript 我们希望函数表现得像构造函数，并用该函数定义的成员实例化一个新对象。</p>
+<p>内部构造，通过引用关键字正在创建新的对象。回顾对象的创建，基本的构造函数可能如下所示：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Car</span>(<span class="params">model, year, miles</span>) </span>&#123;</span><br><span class="line">  <span class="built_in">this</span>.model = model;</span><br><span class="line">  <span class="built_in">this</span>.year = year;</span><br><span class="line">  <span class="built_in">this</span>.miles = miles;</span><br><span class="line"></span><br><span class="line">  <span class="built_in">this</span>.toString = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">this</span>.model + <span class="string">&quot; has done &quot;</span> + <span class="built_in">this</span>.miles + <span class="string">&quot; miles&quot;</span>;</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Usage:</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// We can create new instances of the car</span></span><br><span class="line"><span class="keyword">var</span> civic = <span class="keyword">new</span> Car(<span class="string">&quot;Honda Civic&quot;</span>, <span class="number">2009</span>, <span class="number">20000</span>);</span><br><span class="line"><span class="keyword">var</span> mondeo = <span class="keyword">new</span> Car(<span class="string">&quot;Ford Mondeo&quot;</span>, <span class="number">2010</span>, <span class="number">5000</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// and then open our browser console to view the</span></span><br><span class="line"><span class="comment">// output of the toString() method being called on</span></span><br><span class="line"><span class="comment">// these objects</span></span><br><span class="line"><span class="built_in">console</span>.log(civic.toString());</span><br><span class="line"><span class="built_in">console</span>.log(mondeo.toString());</span><br></pre></td></tr></table></figure>
+
+<p>上面是构造函数模式的简单版本，但是确实存在一些问题。一个是使继承变得困难，另一个是 toString()为使用 Car 构造函数创建的每个新对象重新定义了诸如之类的函数。这并不是非常理想，因为理想情况下应该在 Car 类型的所有实例之间共享该功能。</p>
+<p>值得庆幸的是，构造对象有许多与 ES3 和 ES5 兼容的替代方法，解决此限制很简单。</p>
+<h3 id="具有原型的构造函数"><a href="#具有原型的构造函数" class="headerlink" title="具有原型的构造函数"></a>具有原型的构造函数</h3><p>函数几乎像 JavaScript 中的所有对象一样，都包含一个“原型”对象。当我们调用 JavaScript 构造函数创建对象时，该构造函数原型的所有属性随后都可用于新对象。以这种方式，可以创建访问相同原型的多个 Car 对象。因此，我们可以将原始示例扩展如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Car</span>(<span class="params">model, year, miles</span>) </span>&#123;</span><br><span class="line">  <span class="built_in">this</span>.model = model;</span><br><span class="line">  <span class="built_in">this</span>.year = year;</span><br><span class="line">  <span class="built_in">this</span>.miles = miles;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Note here that we are using Object.prototype.newMethod rather than</span></span><br><span class="line"><span class="comment">// Object.prototype so as to avoid redefining the prototype object</span></span><br><span class="line">Car.prototype.toString = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="built_in">this</span>.model + <span class="string">&quot; has done &quot;</span> + <span class="built_in">this</span>.miles + <span class="string">&quot; miles&quot;</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Usage:</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> civic = <span class="keyword">new</span> Car(<span class="string">&quot;Honda Civic&quot;</span>, <span class="number">2009</span>, <span class="number">20000</span>);</span><br><span class="line"><span class="keyword">var</span> mondeo = <span class="keyword">new</span> Car(<span class="string">&quot;Ford Mondeo&quot;</span>, <span class="number">2010</span>, <span class="number">5000</span>);</span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(civic.toString());</span><br><span class="line"><span class="built_in">console</span>.log(mondeo.toString());</span><br></pre></td></tr></table></figure>
+
+<p>上面，现在将在所有 Car 对象之间共享 toString（）的单个实例。</p>
+<h3 id="es6-的类"><a href="#es6-的类" class="headerlink" title="es6 的类"></a>es6 的类</h3><p>ES6 提供了更接近传统语言的写法，引入了 Class（类）这个概念，作为对象的模板。通过 class 关键字，可以定义类。</p>
+<p>基本上，ES6 的 class 可以看作只是一个语法糖，它的绝大部分功能，ES5 都可以做到，新的 class 写法只是让对象原型的写法更加清晰、更像面向对象编程的语法而已。上面的代码用 ES6 的 class 改写，就是下面这样。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Car</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="title">constructor</span>(<span class="params">model, year, miles</span>)</span> &#123;</span><br><span class="line">    <span class="built_in">this</span>.model = model;</span><br><span class="line">    <span class="built_in">this</span>.year = year;</span><br><span class="line">    <span class="built_in">this</span>.miles = miles;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="function"><span class="title">toString</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">`<span class="subst">$&#123;<span class="built_in">this</span>.model&#125;</span> has done <span class="subst">$&#123;<span class="built_in">this</span>.miles&#125;</span>miles`</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Usage:</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// We can create new instances of the car</span></span><br><span class="line"><span class="keyword">const</span> civic = <span class="keyword">new</span> Car(<span class="string">&quot;Honda Civic&quot;</span>, <span class="number">2009</span>, <span class="number">20000</span>);</span><br><span class="line"><span class="keyword">const</span> mondeo = <span class="keyword">new</span> Car(<span class="string">&quot;Ford Mondeo&quot;</span>, <span class="number">2010</span>, <span class="number">5000</span>);</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/blog/images/wechat.jpg" alt="XKIM 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/blog/images/alipay.jpg" alt="XKIM 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>XKIM
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://xkim1994.github.io/blog/2020/04/23/DesignPattern/constructor-pattern/" title="JavaScript设计模式之构造器模式">https://xkim1994.github.io/blog/2020/04/23/DesignPattern/constructor-pattern/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/blog/tags/es6/" rel="tag"># es6</a>
+              <a href="/blog/tags/oop/" rel="tag"># oop</a>
+              <a href="/blog/tags/DesignPattern/" rel="tag"># DesignPattern</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/2020/04/22/DesignPattern/singleton-pattern/" rel="prev" title="JavaScript设计模式之单例模式">
+      <i class="fa fa-chevron-left"></i> JavaScript设计模式之单例模式
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/2020/04/24/DesignPattern/observer-pattern/" rel="next" title="JavaScript设计模式之观察者模式">
+      JavaScript设计模式之观察者模式 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9E%84%E9%80%A0%E5%99%A8%E6%A8%A1%E5%BC%8F"><span class="nav-number">1.</span> <span class="nav-text">构造器模式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%B9%E8%B1%A1%E5%88%9B%E5%BB%BA"><span class="nav-number">1.1.</span> <span class="nav-text">对象创建</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E6%9E%84%E9%80%A0%E5%87%BD%E6%95%B0"><span class="nav-number">1.2.</span> <span class="nav-text">基本构造函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B7%E6%9C%89%E5%8E%9F%E5%9E%8B%E7%9A%84%E6%9E%84%E9%80%A0%E5%87%BD%E6%95%B0"><span class="nav-number">1.3.</span> <span class="nav-text">具有原型的构造函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#es6-%E7%9A%84%E7%B1%BB"><span class="nav-number">1.4.</span> <span class="nav-text">es6 的类</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">XKIM</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/blog/archives/">
+        
+          <span class="site-state-item-count">10</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/blog/categories/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/blog/tags/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/xkim1994" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;xkim1994" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/blog/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">XKIM</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/blog/lib/anime.min.js"></script>
+  <script src="/blog/lib/velocity/velocity.min.js"></script>
+  <script src="/blog/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/blog/js/utils.js"></script>
+
+<script src="/blog/js/motion.js"></script>
+
+
+<script src="/blog/js/schemes/muse.js"></script>
+
+
+<script src="/blog/js/next-boot.js"></script>
+
+<script src="/blog/js/bookmark.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : 'd8f3fa92b87bc228c7f2',
+      clientSecret: '8b69dabd0224b45968c59e4b985cedd69c826502',
+      repo        : 'blog',
+      owner       : '43065993',
+      admin       : [''],
+      id          : '9185ba93397752a69cfecdafd3383807',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+<script src="/blog/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"model":{"jsonPath":"/blog/live2dw/assets/wanko.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>
